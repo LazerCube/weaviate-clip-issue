@@ -1,4 +1,4 @@
-module github.com/lazercube/weaviate-clip-search
+module github.com/lazercube/weaviate-clip-issue
 
 go 1.19
 

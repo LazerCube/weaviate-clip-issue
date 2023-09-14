@@ -1,40 +1,28 @@
-# Weaviate CLIP Search Example
+# Weaviate CLIP Text Search: Adverse Impact of Additional Descriptions
 
-This example repo to try to improve CLIP text search in Weaviate.
+## Overview
 
-Currently searching for "airplane" does not return any relevant results, even though the embedding text contains the word "airplane".
+This repository underlines a specific behavior observed with the CLIP text search in Weaviate. There's a noticeable degradation in search results when detailed descriptions are added to the CLIP model's embeddings.
 
-```shell
-$ go run ./cmd/search "airplane"
+## Problem Details
 
-Found 3 results
-Filename: dog.jpg
-Description: 
-Certainty: 0.868234
-Distance: 0.263533
-ID: 35ff35af-1415-4414-a963-8cf65555c881
-Image: [redacted]
+- **Primary Concern**: Adding detailed descriptions to the CLIP model's embeddings seems to interfere with the accuracy of the search results.
+- **Evidence**: The following code snippet adds detailed descriptions to certain images:
+    ```go
+    descriptions := map[string]string{
+        "airplane.jpg":      "Airplane flying through a blue sky with clouds",
+        "sprite-fright.png": "A poster for sprite fright",
+    }
+    ```
 
-Filename: city.jpg
-Description: 
-Certainty: 0.864373
-Distance: 0.271254
-ID: 9f3b602f-1303-4eba-bfc5-9fd355a72c0a
-Image: [redacted]
+When these descriptions are present:
+- A search for "airplane" fails to produce the relevant image at all.
+- "sprite fright" returns the expected image but not as the top result.
 
-Filename: sprite-fright.png
-Description: A poster for sprite fright
-Certainty: 0.817505
-Distance: 0.364990
-ID: ec88328e-54b0-4e0a-a6b8-b1bdba530e19
-Image: [redacted]
-```
-
-You'd expect to see `airplane.jpg` in the results, but it's not there. Searching for "sprite fright" on the other hand does return the result but it's not the top result.
+**Before** removing these descriptions:
 
 ```shell
 $ go run ./cmd/search "sprite fright"
-
 Found 3 results
 Filename: dog.jpg
 Description: 
@@ -50,48 +38,45 @@ Distance: 0.259100
 ID: ec88328e-54b0-4e0a-a6b8-b1bdba530e19
 Image: [redacted]
 
-Filename: city.jpg
-Description: 
-Certainty: 0.868882
-Distance: 0.262237
-ID: 9f3b602f-1303-4eba-bfc5-9fd355a72c0a
-Image: [redacted]
+...
 ```
 
-It seems like adding more text to the embedding makes the results worse.
-
-As an example `city.jpg` and `dog.jpg` don't have any extra descriptions added and searching for "animals" or "city" gives what you would expect.
+**After** commenting out these descriptions:
 
 ```shell
-$ go run ./cmd/search "city"
-
-Found 3 results
-Filename: city.jpg
-Description: 
-Certainty: 0.883115
-Distance: 0.233770
-ID: 9f3b602f-1303-4eba-bfc5-9fd355a72c0a
-Image: [redacted]
-
-Filename: dog.jpg
-Description: 
-Certainty: 0.867975
-Distance: 0.264051
-ID: 35ff35af-1415-4414-a963-8cf65555c881
-Image: [redacted]
-
+$ go run ./cmd/search "sprite fright"
+Found 1 results
 Filename: sprite-fright.png
-Description: A poster for sprite fright
-Certainty: 0.807907
-Distance: 0.384187
-ID: ec88328e-54b0-4e0a-a6b8-b1bdba530e19
+Description: 
+Certainty: 0.904607
+Distance: 0.190787
+ID: 7078501e-0db7-4822-a497-daa6efafe951
 Image: [redacted]
 ```
 
-## How to run
+## Reproduction Steps
 
-```bash
-docker-compose up -d
-go run ./cmd/import
-go run ./cmd/search <search term>
-```
+To replicate this behavior and contrast the search outcomes:
+
+1. **Setup Environment:**
+
+    ```shell
+    $ docker-compose up -d
+    ```
+
+2. **Import Sample Data with Descriptions:**
+
+    ```shell
+    $ go run ./cmd/import
+    ```
+
+3. **Run a Search with Descriptions:**
+
+    Use a search term like "sprite fright".
+    ```shell
+    $ go run ./cmd/search "sprite fright"
+    ```
+
+4. **Modify Descriptions:**
+    
+    Comment out the descriptions in the code. Specifically, go to [./internal/data/objects.go on line 26](https://github.com/lazercube/weaviate-clip-issue/blob/master/internal/data/objects.go#L26).

@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lazercube/weaviate-clip-search/internal/client"
-	"github.com/lazercube/weaviate-clip-search/internal/data"
+	"github.com/lazercube/weaviate-clip-issue/internal/client"
+	"github.com/lazercube/weaviate-clip-issue/internal/data"
 )
 
 func main() {
