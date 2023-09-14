@@ -12,8 +12,6 @@ services:
     ports:
     - 8080:8080
     restart: on-failure:0
-    volumes:
-      - ./storage/weaviate:/var/lib/weaviate
     environment:
       CLIP_INFERENCE_API: 'http://multi2vec-clip:8080'
       SPELLCHECK_INFERENCE_API: 'http://text-spellcheck:8080'

@@ -15,6 +15,10 @@ func CreateClass(ctx context.Context, client *weaviate.Client) error {
 			"multi2vec-clip": map[string]interface{}{
 				"imageFields": []string{"image"},
 				"textFields":  []string{"description"},
+				// "weights": map[string]interface{}{
+				// 	"textFields":  0.7,
+				// 	"imageFields": 0.3,
+				// },
 			},
 		},
 		VectorIndexType: "hnsw",

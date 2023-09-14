@@ -21,18 +21,31 @@ func ImportObjects(ctx context.Context, client *weaviate.Client) error {
 		return err
 	}
 
+	// Removing these descriptions seems to improve the search
+	// results even when text is used as a search term.
+	descriptions := map[string]string{
+		"airplane.jpg":      "Airplane flying through a blue sky with clouds",
+		"sprite-fright.png": "A poster for sprite fright",
+	}
+
 	objects := []*models.Object{}
 	for _, f := range files {
 		data, err := os.ReadFile(fmt.Sprintf("%s/%s", basePath, f.Name()))
 		if err != nil {
 			return err
 		}
-		image := b64.StdEncoding.EncodeToString([]byte(data))
+
+		description, ok := descriptions[f.Name()]
+		if !ok {
+			description = ""
+		}
+
+		image := b64.StdEncoding.EncodeToString(data)
 		object := &models.Object{
 			Class: Class,
 			Properties: map[string]interface{}{
 				"filename":    f.Name(),
-				"description": "A picture of a " + f.Name(),
+				"description": description,
 				"image":       image,
 			},
 		}
@@ -43,12 +56,15 @@ func ImportObjects(ctx context.Context, client *weaviate.Client) error {
 	for i := range objects {
 		batcher.WithObjects(objects[i])
 	}
+
 	resp, err := batcher.Do(ctx)
 	if err != nil {
 		return err
 	}
+
 	if len(resp) != len(objects) {
 		return errors.New("not all objects imported")
 	}
+
 	return nil
 }
