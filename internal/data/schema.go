@@ -14,6 +14,7 @@ func CreateClass(ctx context.Context, client *weaviate.Client) error {
 		ModuleConfig: map[string]interface{}{
 			"multi2vec-clip": map[string]interface{}{
 				"imageFields": []string{"image"},
+				"textFields":  []string{"description"},
 			},
 		},
 		VectorIndexType: "hnsw",
@@ -23,6 +24,11 @@ func CreateClass(ctx context.Context, client *weaviate.Client) error {
 				DataType:    []string{"string"},
 				Description: "The name of the file",
 				Name:        "filename",
+			},
+			{
+				DataType:    []string{"string"},
+				Description: "The description of the image",
+				Name:        "description",
 			},
 			{
 				DataType:    []string{"blob"},

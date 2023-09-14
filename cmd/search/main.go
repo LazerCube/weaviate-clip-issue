@@ -26,6 +26,7 @@ func main() {
 	fmt.Printf("Found %d results\n", len(result))
 	for _, r := range result {
 		fmt.Printf("Filename: %s\n", r.Filename)
+		fmt.Printf("Description: %s\n", r.Description)
 		fmt.Printf("Certainty: %f\n", r.Certainty)
 		fmt.Printf("Distance: %f\n", r.Distance)
 		fmt.Printf("ID: %s\n", r.ID)

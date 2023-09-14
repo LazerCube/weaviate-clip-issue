@@ -9,11 +9,12 @@ import (
 
 type (
 	Result struct {
-		Filename  string
-		Image     string
-		Certainty float64
-		Distance  float64
-		ID        string
+		Filename    string
+		Image       string
+		Description string
+		Certainty   float64
+		Distance    float64
+		ID          string
 	}
 )
 
@@ -28,6 +29,7 @@ func SearchObjects(ctx context.Context, client *weaviate.Client, text string) ([
 		WithFields([]graphql.Field{
 			{Name: "filename"},
 			{Name: "image"},
+			{Name: "description"},
 			{Name: "_additional", Fields: []graphql.Field{
 				{Name: "certainty"},
 				{Name: "distance"},
@@ -35,6 +37,7 @@ func SearchObjects(ctx context.Context, client *weaviate.Client, text string) ([
 			}},
 		}...).
 		WithNearText(nearText).
+		WithAutocut(1).
 		Do(ctx)
 	if err != nil {
 		return nil, err
@@ -47,11 +50,12 @@ func SearchObjects(ctx context.Context, client *weaviate.Client, text string) ([
 		rowMap := row.(map[string]interface{})
 		additionalMap := rowMap["_additional"].(map[string]interface{})
 		results = append(results, &Result{
-			Filename:  rowMap["filename"].(string),
-			Image:     rowMap["image"].(string),
-			Certainty: additionalMap["certainty"].(float64),
-			Distance:  additionalMap["distance"].(float64),
-			ID:        additionalMap["id"].(string),
+			Filename:    rowMap["filename"].(string),
+			Image:       rowMap["image"].(string),
+			Description: rowMap["description"].(string),
+			Certainty:   additionalMap["certainty"].(float64),
+			Distance:    additionalMap["distance"].(float64),
+			ID:          additionalMap["id"].(string),
 		})
 	}
 
