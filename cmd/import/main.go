@@ -13,6 +13,11 @@ func main() {
 
 	client := client.CreatClient()
 
+	fmt.Printf("Delete class\n")
+	if err := data.DeleteClass(ctx, client); err != nil {
+		panic(err)
+	}
+
 	fmt.Printf("Create class\n")
 	if err := data.CreateClass(ctx, client); err != nil {
 		panic(err)

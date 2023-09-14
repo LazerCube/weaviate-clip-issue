@@ -12,8 +12,10 @@ import (
 	"github.com/weaviate/weaviate/entities/models"
 )
 
+const Class = "MultiModal"
+
 func ImportObjects(ctx context.Context, client *weaviate.Client) error {
-	basePath := "../../images"
+	basePath := "./images"
 	files, err := os.ReadDir(basePath)
 	if err != nil {
 		return err
@@ -27,7 +29,7 @@ func ImportObjects(ctx context.Context, client *weaviate.Client) error {
 		}
 		image := b64.StdEncoding.EncodeToString([]byte(data))
 		object := &models.Object{
-			Class: "MultiModal",
+			Class: Class,
 			Properties: map[string]interface{}{
 				"filename": f.Name(),
 				"image":    image,
@@ -38,7 +40,7 @@ func ImportObjects(ctx context.Context, client *weaviate.Client) error {
 
 	batcher := client.Batch().ObjectsBatcher()
 	for i := range objects {
-		batcher.WithObject(objects[i])
+		batcher.WithObjects(objects[i])
 	}
 	resp, err := batcher.Do(ctx)
 	if err != nil {

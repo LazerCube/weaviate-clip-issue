@@ -29,7 +29,7 @@ func main() {
 		fmt.Printf("Certainty: %f\n", r.Certainty)
 		fmt.Printf("Distance: %f\n", r.Distance)
 		fmt.Printf("ID: %s\n", r.ID)
-		fmt.Printf("Image: %s\n", r.Image)
+		fmt.Printf("Image: %s\n", "[redacted]")
 		fmt.Println()
 	}
 }
