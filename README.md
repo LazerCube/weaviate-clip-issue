@@ -1,0 +1,1 @@
+# Weaviate CLIP Search Example
