@@ -10,19 +10,23 @@ import (
 func CreateClass(ctx context.Context, client *weaviate.Client) error {
 	multiModal := &models.Class{
 		Class:       Class,
-		Description: "Sample class holding all the images",
+		Description: "Sample class holding information about a file",
 		ModuleConfig: map[string]interface{}{
-			"multi2vec-clip": map[string]interface{}{
+			"multi2vec-bind": map[string]interface{}{
 				"imageFields": []string{"image"},
-				"textFields":  []string{"description"},
-				// "weights": map[string]interface{}{
-				// 	"textFields":  0.7,
-				// 	"imageFields": 0.3,
-				// },
+				"textFields":  []string{"text"},
+				"audioFields": []string{"audio"},
+				"videoFields": []string{"video"},
+				"weights": map[string]interface{}{
+					"textFields":  0.4,
+					"imageFields": 0.2,
+					"audioFields": 0.2,
+					"videoFields": 0.2,
+				},
 			},
 		},
 		VectorIndexType: "hnsw",
-		Vectorizer:      "multi2vec-clip",
+		Vectorizer:      "multi2vec-bind",
 		Properties: []*models.Property{
 			{
 				DataType:    []string{"string"},
@@ -32,12 +36,22 @@ func CreateClass(ctx context.Context, client *weaviate.Client) error {
 			{
 				DataType:    []string{"string"},
 				Description: "The description of the image",
-				Name:        "description",
+				Name:        "text",
 			},
 			{
 				DataType:    []string{"blob"},
 				Description: "Base64 encoded image",
 				Name:        "image",
+			},
+			{
+				DataType:    []string{"blob"},
+				Description: "audio",
+				Name:        "audio",
+			},
+			{
+				DataType:    []string{"blob"},
+				Description: "video",
+				Name:        "video",
 			},
 		},
 	}

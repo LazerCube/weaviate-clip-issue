@@ -44,9 +44,9 @@ func ImportObjects(ctx context.Context, client *weaviate.Client) error {
 		object := &models.Object{
 			Class: Class,
 			Properties: map[string]interface{}{
-				"filename":    f.Name(),
-				"description": description,
-				"image":       image,
+				"filename": f.Name(),
+				"text":     description,
+				"image":    image,
 			},
 		}
 		objects = append(objects, object)
